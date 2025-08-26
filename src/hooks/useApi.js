@@ -1,0 +1,28 @@
+import { useState } from 'react';
+
+export const useApi = (apiFunc) => {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const request = async (...args) => {
+    setLoading(true);
+    try {
+      const result = await apiFunc(...args);
+      setData(result.data);
+      setError(null);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Something went wrong');
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    data,
+    error,
+    loading,
+    request,
+  };
+};
