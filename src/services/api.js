@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://ar-backend-fmqm.onrender.com/api' || import.meta.env.VITE_API_URL,
+  baseURL: 'http://localhost:5000/api' || import.meta.env.VITE_API_URL,
 });
 
 // Add a request interceptor to include the token in every request

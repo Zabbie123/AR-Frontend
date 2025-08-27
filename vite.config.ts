@@ -14,7 +14,7 @@ export default defineConfig({
     host: "0.0.0.0",
     proxy: {
       '/api': {
-        target: 'https://ar-backend-fmqm.onrender.com',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
       },

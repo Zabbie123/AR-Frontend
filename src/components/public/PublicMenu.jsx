@@ -170,8 +170,8 @@
 //                   <div>
 //                     <model-viewer
 //                       ref={modelViewerRef}
-//                       src={`https://ar-backend-fmqm.onrender.com/uploads/model/${restaurantId}/${selectedDish.name}.glb`}
-//                       ios-src={`https://ar-backend-fmqm.onrender.com/uploads/model/${restaurantId}/model.usdz`}
+//                       src={`http://localhost:5000/uploads/model/${restaurantId}/${selectedDish.name}.glb`}
+//                       ios-src={`http://localhost:5000/uploads/model/${restaurantId}/model.usdz`}
 //                       alt="3D Chair"
 //                       ar
 //                       ar-modes="scene-viewer quick-look webxr"
@@ -421,8 +421,8 @@ const PublicMenu = () => {
                     {/* Hidden model-viewer for each dish */}
                     <model-viewer
                       ref={(el) => (modelViewerRefs.current[dish._id] = el)}
-                      src={`https://ar-backend-fmqm.onrender.com/uploads/model/${restaurantId}/${dish.name}.glb`}
-                      ios-src={`https://ar-backend-fmqm.onrender.com/uploads/model/${restaurantId}/${dish.name}.usdz`}
+                      src={`http://localhost:5000/uploads/model/${restaurantId}/${dish.name}.glb`}
+                      ios-src={`http://localhost:5000/uploads/model/${restaurantId}/${dish.name}.usdz`}
                       alt={dish.name}
                       ar
                       ar-modes="scene-viewer quick-look webxr"
