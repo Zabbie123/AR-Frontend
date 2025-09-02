@@ -46,7 +46,7 @@ const PreviewPage = () => {
       ? dishes
       : dishes.filter(dish => dish.category === selectedCategory);
 
-  const publicMenuUrl = `${window.location.protocol}//${window.location.hostname}:5173/menu/${restaurant.slug}`;;
+  const publicMenuUrl = `${window.location.protocol}//${window.location.hostname}/menu/${restaurant.slug}`;;
   // const publicMenuUrl = `${window.location.origin}/menu/${restaurant.slug}`;
   return (
     <div className="bg-white p-4 sm:p-6 rounded-lg shadow max-w-7xl mx-auto">

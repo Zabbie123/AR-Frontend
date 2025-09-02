@@ -16,7 +16,7 @@ const Dashboard = () => {
   if (user?.role === 'admin' && !user?.restaurantId) {
     return (
       <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-2xl font-bold mb-6">Welcome, {user?.username}</h2>
+        <h2 className="text-2xl font-bold mb-6 text-white">Welcome, {user?.username}</h2>
         <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
           <div className="flex">
             <div className="ml-3">
@@ -35,7 +35,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">
+      <h2 className="text-2xl font-bold mb-6 text-white">
         Welcome, {restaurant?.name || user?.username}
       </h2>
       
