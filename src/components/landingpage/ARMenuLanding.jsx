@@ -158,14 +158,14 @@ const ARMenuLanding = () => {
                             <button className="cta-secondary"><a href='#demo'>Watch Demo</a></button>
                         </div>
                         <div className="hero-stats">
-                            <div className="stat">
+                            {/* <div className="stat">
                                 <span className="stat-number">500+</span>
                                 <span className="stat-label">Restaurants</span>
                             </div>
                             <div className="stat">
                                 <span className="stat-number">2M+</span>
                                 <span className="stat-label">Happy Customers</span>
-                            </div>
+                            </div> */}
                             <div className="stat">
                                 <span className="stat-number">4.9★</span>
                                 <span className="stat-label">Rating</span>
@@ -295,10 +295,10 @@ const ARMenuLanding = () => {
                     <div className="benefits-right">
                         <div className="testimonial-card">
                             <div className="testimonial-header">
-                                <img src="https://picsum.photos/seed/restaurant1/50/50.jpg" alt="Restaurant" className="testimonial-avatar" />
+                                <img src="/arora-dream.jpg" alt="Restaurant" className="testimonial-avatar" />
                                 <div>
-                                    <h4>Maria Rodriguez</h4>
-                                    <p>Owner, Bella Vista</p>
+                                    <h4>Adarsh Arora</h4>
+                                    <p>Owner, Arora Dream</p>
                                 </div>
                             </div>
                             <div className="testimonial-content">
