@@ -68,6 +68,7 @@ export const RestaurantProvider = ({ children }) => {
         dishes,
         loading,
         error,
+        setDishes,
         refreshData,
       }}
     >

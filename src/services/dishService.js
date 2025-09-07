@@ -5,7 +5,9 @@ export const dishService = {
   getDishes: () => {
     return api.get('/dishes');
   },
-  getDish: (id) => api.get(`/dishes/${id}`),
+  getDish: (id) => {
+    return api.get(`/dishes/${id}`)
+  },
   createDish: (dishData) => {
     return api.post('/dishes', dishData);
   },

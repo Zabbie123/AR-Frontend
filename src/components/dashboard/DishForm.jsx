@@ -6,7 +6,7 @@ import { dishService } from '../../services/dishService';
 import Button from '../common/Button';
 
 const DishForm = () => {
-  const { id } = useParams(); // dish ID if editing
+  const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const { restaurant } = useContext(RestaurantContext);
@@ -29,6 +29,7 @@ const DishForm = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [enableModels, setEnableModels] = useState(false); // <-- NEW STATE
 
   useEffect(() => {
     if (id) {
@@ -48,6 +49,10 @@ const DishForm = () => {
             tags: dish.tags.join(', '),
             isVisible: dish.isVisible,
           });
+
+          if (dish.model3dglb || dish.model3dusdz) {
+            setEnableModels(true);
+          }
         } catch (err) {
           console.error('Error fetching dish:', err);
           setError(err.response?.data?.message || 'Error fetching dish');
@@ -88,14 +93,14 @@ const DishForm = () => {
       let glbmodelUrl = formData.model3dglb;
       let usdzmodelUrl = formData.model3dusdz;
 
-      if (glbmodelFile) {
+      if (enableModels && glbmodelFile) {
         const glbmodelFormData = new FormData();
         glbmodelFormData.append('model', glbmodelFile);
         const modelResponse = await dishService.uploadModel(glbmodelFormData);
         glbmodelUrl = modelResponse.data.filePath;
       }
 
-      if (usdzmodelFile) {
+      if (enableModels && usdzmodelFile) {
         const usdzmodelFormData = new FormData();
         usdzmodelFormData.append('model', usdzmodelFile);
         const modelResponse = await dishService.uploadModel(usdzmodelFormData);
@@ -131,6 +136,7 @@ const DishForm = () => {
         });
         setGlbModelFile(null);
         setUsdzModelFile(null);
+        setEnableModels(false);
       }
 
     } catch (err) {
@@ -158,6 +164,7 @@ const DishForm = () => {
       )}
 
       <form onSubmit={handleSubmit}>
+        {/* Dish Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="form-group">
             <label htmlFor="name">Dish Name</label>
@@ -217,7 +224,8 @@ const DishForm = () => {
           </div>
         </div>
 
-        <div className="form-group">
+        {/* Description */}
+        <div className="form-group mt-4">
           <label htmlFor="description">Description</label>
           <textarea
             id="description"
@@ -228,29 +236,62 @@ const DishForm = () => {
           ></textarea>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="form-group">
-            <label htmlFor="model3dglb">3D Model (.glb)</label>
-            <input type="file" id="model3dglb" name="model3dglb" onChange={handleGlbModelChange} accept=".glb,.gltf" />
-            {formData.model3dglb && (
-              <div className="mt-2">
-                <p>Current model: {formData.model3dglb.split('/').pop()}</p>
-              </div>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="model3dusdz">3D Model (.usdz)</label>
-            <input type="file" id="model3dusdz" name="model3dusdz" onChange={handleUsdzModelChange} accept=".usdz" required />
-            {formData.model3dusdz && (
-              <div className="mt-2">
-                <p>Current model: {formData.model3dusdz.split('/').pop()}</p>
-              </div>
-            )}
+        {/* Enable/Disable Toggle Switch */}
+        <div className="flex items-center gap-4 mt-6">
+          <label className="font-semibold">Enable 3D Model Upload</label>
+          <div
+            onClick={() => setEnableModels(!enableModels)}
+            className={`relative w-14 h-7 rounded-full cursor-pointer transition-all ${
+              enableModels ? 'bg-green-500' : 'bg-gray-300'
+            }`}
+          >
+            <div
+              className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-300 ${
+                enableModels ? 'translate-x-7' : 'translate-x-0'
+              }`}
+            ></div>
           </div>
         </div>
 
-        <div className="form-group checkbox">
+        {/* Model Inputs */}
+        {enableModels && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <div className="form-group">
+              <label htmlFor="model3dglb">3D Model (.glb)</label>
+              <input
+                type="file"
+                id="model3dglb"
+                name="model3dglb"
+                onChange={handleGlbModelChange}
+                accept=".glb,.gltf"
+              />
+              {formData.model3dglb && (
+                <div className="mt-2">
+                  <p>Current model: {formData.model3dglb.split('/').pop()}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="model3dusdz">3D Model (.usdz)</label>
+              <input
+                type="file"
+                id="model3dusdz"
+                name="model3dusdz"
+                onChange={handleUsdzModelChange}
+                accept=".usdz"
+              />
+              {formData.model3dusdz && (
+                <div className="mt-2">
+                  <p>Current model: {formData.model3dusdz.split('/').pop()}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Show in Menu */}
+        <div className="form-group checkbox mt-6">
           <input
             type="checkbox"
             id="isVisible"
@@ -261,6 +302,7 @@ const DishForm = () => {
           <label htmlFor="isVisible">Show in Menu</label>
         </div>
 
+        {/* Buttons */}
         <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:space-x-4 mt-6">
           <Button
             type="button"

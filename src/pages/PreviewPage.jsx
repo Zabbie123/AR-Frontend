@@ -1,21 +1,56 @@
-import React, { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
-import { RestaurantContext } from '../context/RestaurantContext';
-import LoadingSpinner from '../components/common/LoadingSpinner';
-import Button from '../components/common/Button';
-import { QRCodeSVG } from 'qrcode.react';
+import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import { RestaurantContext } from "../context/RestaurantContext";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+import Button from "../components/common/Button";
+import { QRCodeSVG } from "qrcode.react";
+import axios from "axios";
 
 const PreviewPage = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const { restaurant, dishes, loading } = useContext(RestaurantContext);
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const { restaurant, dishes, loading, setDishes } = useContext(RestaurantContext);
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [qrCodeModalOpen, setQrCodeModalOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(null);
 
-  const fetchModel = (restaurantId, modelName) => {
-    const url = `http://${windows.location.origin}:5000/api/upload/models/${restaurantId}/${modelName}`;
+  // ✅ Fetch 3D Model using dishId
+  const fetchModel = (dishId, modelName) => {
+    if (!dishId || !modelName) {
+      alert("3D model not available!");
+      return;
+    }
+
+    const url = `http://${window.location.hostname}:5000/api/upload/models/${dishId}/${modelName}`;
     window.open(url, "_blank");
+  };
+
+  const handleDeleteDish = async (dishId) => {
+    if (!user?.token) {
+      alert("Session expired. Please log in again!");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        `http://${window.location.hostname}:5000/api/dishes/${dishId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      if(response.status == 200){
+        setDishes((prev) => (Array.isArray(prev) ? prev.filter((dish) => dish._id !== dishId) : []));
+        alert("Dish deleted successfully!");
+      }
+      // setDishes((prev) => prev.filter((dish) => dish._id !== dishId));
+    } catch (error) {
+      console.error("Delete Dish Error:", error.response?.data || error.message);
+      alert("Failed to delete dish. Please try again!");
+    }
   };
 
   if (loading) {
@@ -32,7 +67,7 @@ const PreviewPage = () => {
           </p>
         </div>
         <div className="flex justify-center">
-          <Button onClick={() => navigate('/profile')} variant="primary">
+          <Button onClick={() => navigate("/profile")} variant="primary">
             Set Up Restaurant
           </Button>
         </div>
@@ -40,24 +75,32 @@ const PreviewPage = () => {
     );
   }
 
-  const categories = [...new Set(dishes.map(dish => dish.category))];
+  const categories = [...new Set(dishes.map((dish) => dish.category))];
   const filteredDishes =
-    selectedCategory === 'all'
+    selectedCategory === "all"
       ? dishes
-      : dishes.filter(dish => dish.category === selectedCategory);
+      : dishes.filter((dish) => dish.category === selectedCategory);
 
-  const publicMenuUrl = `${window.location.protocol}//${window.location.hostname}/menu/${restaurant.slug}`;;
-  // const publicMenuUrl = `${window.location.origin}/menu/${restaurant.slug}`;
+  const publicMenuUrl = `${window.location.protocol}//${window.location.hostname}/menu/${restaurant.slug}`;
+
   return (
     <div className="bg-white p-4 sm:p-6 rounded-lg shadow max-w-7xl mx-auto">
       {/* Header Actions */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
         <h2 className="text-xl font-semibold text-center sm:text-left">Menu Preview</h2>
         <div className="flex flex-col sm:flex-row gap-2">
-          <Button onClick={() => setQrCodeModalOpen(true)} variant="secondary" className="w-full sm:w-auto">
+          <Button
+            onClick={() => setQrCodeModalOpen(true)}
+            variant="secondary"
+            className="w-full sm:w-auto"
+          >
             Generate QR Code
           </Button>
-          <Button onClick={() => window.open(publicMenuUrl, '_blank')} variant="primary" className="w-full sm:w-auto">
+          <Button
+            onClick={() => window.open(publicMenuUrl, "_blank")}
+            variant="primary"
+            className="w-full sm:w-auto"
+          >
             View Public Menu
           </Button>
         </div>
@@ -71,19 +114,21 @@ const PreviewPage = () => {
         {/* Categories */}
         <div className="flex flex-wrap justify-center sm:justify-start gap-2 mb-4">
           <button
-            className={`px-3 py-1 text-sm rounded-full transition ${
-              selectedCategory === 'all' ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-300'
-            }`}
-            onClick={() => setSelectedCategory('all')}
+            className={`px-3 py-1 text-sm rounded-full transition ${selectedCategory === "all"
+              ? "bg-black text-white"
+              : "bg-gray-200 hover:bg-gray-300"
+              }`}
+            onClick={() => setSelectedCategory("all")}
           >
             All Items
           </button>
-          {categories.map(category => (
+          {categories.map((category) => (
             <button
               key={category}
-              className={`px-3 py-1 text-sm rounded-full transition ${
-                selectedCategory === category ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-300'
-              }`}
+              className={`px-3 py-1 text-sm rounded-full transition ${selectedCategory === category
+                ? "bg-black text-white"
+                : "bg-gray-200 hover:bg-gray-300"
+                }`}
               onClick={() => setSelectedCategory(category)}
             >
               {category}
@@ -96,28 +141,28 @@ const PreviewPage = () => {
       {filteredDishes.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-500 mb-4">No dishes available in this category.</p>
-          <Button onClick={() => navigate('/menu/add')} variant="primary">
+          <Button onClick={() => navigate("/menu/add")} variant="primary">
             Add Your First Dish
           </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredDishes.map(dish => (
+          {filteredDishes.map((dish) => (
             <div
               key={dish._id}
-              className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+              className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow relative"
             >
               {dish.image && (
                 <div className="h-48 overflow-hidden relative">
                   <button
-                    onClick={() => fetchModel(user.restaurantId._id.toString(), dish.model3d)}
+                    onClick={() => fetchModel(dish._id, dish.model3d)}
                     className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-3 py-1 rounded-lg shadow-md hover:bg-blue-700"
                   >
                     View 3D
                   </button>
-                  {/* <img src={dish.image} alt={dish.name} className="w-full h-full object-cover"/> */}
                 </div>
               )}
+
               <div className="p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="text-lg font-medium">{dish.name}</h3>
@@ -136,10 +181,29 @@ const PreviewPage = () => {
                 )}
 
                 {dish.model3d && (
-                  <div className="text-xs bg-gray-800 text-white text-center py-1 rounded">
+                  <div className="text-xs bg-gray-800 text-white text-center py-1 rounded mb-3">
                     3D/AR View Available
                   </div>
                 )}
+
+                {/* ✅ Edit & Delete Buttons */}
+                <div className="flex gap-2 mt-3">
+                  <Button
+                    onClick={() => navigate(`/menu/edit/${dish._id}`)}
+                    variant="secondary"
+                    className="flex-1"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onClick={() => handleDeleteDish(dish._id)}
+                    variant="danger"
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                    disabled={deleteLoading === dish._id}
+                  >
+                    {deleteLoading === dish._id ? "Deleting..." : "Delete"}
+                  </Button>
+                </div>
               </div>
             </div>
           ))}
@@ -173,7 +237,9 @@ const PreviewPage = () => {
               </div>
 
               <div className="w-full mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Menu URL:</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Menu URL:
+                </label>
                 <div className="flex flex-col sm:flex-row">
                   <input
                     type="text"
@@ -184,7 +250,7 @@ const PreviewPage = () => {
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(publicMenuUrl);
-                      alert('URL copied to clipboard!');
+                      alert("URL copied to clipboard!");
                     }}
                     className="mt-2 sm:mt-0 px-3 py-2 bg-gray-200 border border-gray-300 rounded-md sm:rounded-l-none sm:rounded-r-md hover:bg-gray-300"
                   >
@@ -212,7 +278,9 @@ const PreviewPage = () => {
                     downloadLink.click();
                     document.body.removeChild(downloadLink);
                   };
-                  img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+                  img.src =
+                    "data:image/svg+xml;base64," +
+                    btoa(unescape(encodeURIComponent(svgData)));
                 }}
                 variant="primary"
               >

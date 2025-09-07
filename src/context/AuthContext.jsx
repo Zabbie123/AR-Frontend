@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       const token = localStorage.getItem('token');
-      
+
       if (token) {
         try {
           const response = await authService.getProfile();
@@ -23,39 +23,56 @@ export const AuthProvider = ({ children }) => {
           localStorage.removeItem('token');
         }
       }
-      
+
       setLoading(false);
     };
 
     checkAuthStatus();
   }, []);
 
+  // const login = async (email, password) => {
+  //   const response = await authService.login(email, password);
+
+  //   const { user, token } = response.data;
+
+  //   // Store token in localStorage
+  //   localStorage.setItem('token', token);
+  //   setUser(user);
+  //   setIsAuthenticated(true);
+
+  //   return response.data;
+  // };
+
   const login = async (email, password) => {
     const response = await authService.login(email, password);
-    
+
     const { user, token } = response.data;
-    
-    // Store token in localStorage
+
+    // ✅ Store both user and token together in localStorage
+    const userData = { ...user, token };
+    localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('token', token);
-    setUser(user);
+
+    // ✅ Update state properly
+    setUser(userData);
     setIsAuthenticated(true);
-    
-    return response.data;
+
+    return userData;
   };
 
   const register = async (userData) => {
     const response = await authService.register(userData);
-    
+
     const { user, token } = response.data;
-    
+
     localStorage.setItem('token', token);
     setUser(user);
     setIsAuthenticated(true);
-    
+
     setTimeout(() => {
       window.location.href = '/dashboard';
     }, 1000);
-    
+
     return response.data;
   };
 
