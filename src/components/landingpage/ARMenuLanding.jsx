@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ARMenuLanding = () => {
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeFeature, setActiveFeature] = useState(0);
     const [email, setEmail] = useState('');
     const [rotation, setRotation] = useState(0);
@@ -127,7 +128,7 @@ const ARMenuLanding = () => {
     return (
         <div className="ar-menu-landing">
             {/* Navigation */}
-            <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
+            {/* <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
                 <div className="nav-container">
                     <div className="nav-logo">
                         <span className="logo-icon"><img src='/icon.svg' width={30}/></span>
@@ -141,6 +142,44 @@ const ARMenuLanding = () => {
                         <button className="nav-cta" onClick={handleGetStarted}>Get Started</button>
                     </div>
                 </div>
+            </nav> */}
+            {/* Navigation */}
+            <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
+                <div className="nav-container flex items-center justify-between">
+                    {/* Logo */}
+                    <div className="nav-logo flex items-center">
+                        <span className="logo-icon"><img src='/icon.svg' width={30} /></span>
+                        <span className="logo-text">ARMenu</span>
+                    </div>
+
+                    {/* Desktop Links */}
+                    <div className="hidden md:flex nav-links space-x-6">
+                        <a href="#features">Features</a>
+                        <a href="#how-it-works">How it Works</a>
+                        <a href="#benefits">Benefits</a>
+                        <a href="#demo">Demo</a>
+                        <button className="nav-cta" onClick={handleGetStarted}>Get Started</button>
+                    </div>
+
+                    {/* Mobile Hamburger Button */}
+                    <button
+                        className="md:hidden text-3xl ml-auto"
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    >
+                        {isMenuOpen ? "✖" : "☰"}
+                    </button>
+                </div>
+
+                {/* Mobile Menu */}
+                {isMenuOpen && (
+                    <div className="md:hidden flex flex-col items-end bg-white shadow-lg p-4 space-y-3">
+                        <a href="#features" onClick={() => setIsMenuOpen(false)}>Features</a>
+                        <a href="#how-it-works" onClick={() => setIsMenuOpen(false)}>How it Works</a>
+                        <a href="#benefits" onClick={() => setIsMenuOpen(false)}>Benefits</a>
+                        <a href="#demo" onClick={() => setIsMenuOpen(false)}>Demo</a>
+                        <button className="nav-cta" onClick={handleGetStarted}>Get Started</button>
+                    </div>
+                )}
             </nav>
 
             {/* Hero Section */}
@@ -405,7 +444,7 @@ const ARMenuLanding = () => {
                 <div className="footer-content">
                     <div className="footer-section">
                         <div className="footer-logo">
-                            <span className="logo-icon" style={{color: 'white'}}><img src='/icon.svg' width={30}/></span>
+                            <span className="logo-icon" style={{ color: 'white' }}><img src='/icon.svg' width={30} /></span>
                             <span className="logo-text">ARMenu</span>
                         </div>
                         <p className="footer-tagline">The future of restaurant menus</p>
