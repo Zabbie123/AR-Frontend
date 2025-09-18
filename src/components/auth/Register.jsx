@@ -154,22 +154,22 @@ export default function Register() {
         setError(null);
 
         if (formData.password !== formData.confirmPassword) {
-            setError("Passwords do not match");
+            setError('Passwords do not match');
             setLoading(false);
             return;
         }
 
         try {
-            await register({
+            const result = await register({
                 username: formData.username,
                 email: formData.email,
                 password: formData.password,
-                role: formData.role,
+                role: formData.role
             });
-            navigate("/dashboard");
+            navigate('/dashboard');
         } catch (err) {
-            console.error("Registration failed:", err);
-            setError(err.response?.data?.message || "Registration failed");
+            console.error('Registration failed:', err);
+            setError(err.response?.data?.message || 'Registration failed');
         } finally {
             setLoading(false);
         }
