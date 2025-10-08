@@ -284,39 +284,6 @@ import { restaurantService } from "../../services/restaurantService";
 
 import { motion } from 'framer-motion';
 
-const menuData = [
-  {
-    category: 'Starters',
-    items: [
-      { name: 'Roasted Beet Carpaccio', desc: 'Herbed goat cheese, arugula, citrus vinaigrette', price: '8.50', tags: ['V'] },
-      { name: 'Crispy Calamari', desc: 'Lemon aioli, parsley, piquillo peppers', price: '10.00' },
-      { name: 'Soup of the Day', desc: 'Ask your server about today\'s creation', price: '6.50', tags: ['GF'] },
-    ],
-  },
-  {
-    category: 'Mains',
-    items: [
-      { name: 'Pan-Seared Salmon', desc: 'Herb butter, blistered cherry tomatoes, baby spinach', price: '18.00', tags: ['GF'] },
-      { name: 'Truffle Mushroom Risotto', desc: 'Arborio rice, shaved parmesan, microgreens', price: '16.50', tags: ['V'] },
-      { name: 'Grilled Ribeye (10 oz)', desc: 'Charred broccolini, roasted potatoes, red wine jus', price: '24.00' },
-    ],
-  },
-  {
-    category: 'Desserts',
-    items: [
-      { name: 'Chocolate Fondant', desc: 'Warm center, pistachio crumble', price: '7.00' },
-      { name: 'Vanilla Bean Panna Cotta', desc: 'Seasonal coulis, almond crumb', price: '6.50' },
-    ],
-  },
-  {
-    category: 'Beverages',
-    items: [
-      { name: 'House Coffee', desc: 'Freshly brewed, served hot or iced', price: '3.00' },
-      { name: 'Sparkling Lemonade', desc: 'Mint, lemon, lightly sweetened', price: '4.50' },
-    ],
-  },
-];
-
 function Tag({ children }) {
   return (
     <span className="ml-2 inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium leading-4 bg-gray-100 text-gray-700">
@@ -334,12 +301,30 @@ export default function RestaurantMenu() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState("grid");
   const modelViewerRefs = useRef({});
+
+  // const handleViewAR = (dishId) => {
+  //   const viewer = modelViewerRefs.current[dishId];
+  //   console.log("AR triggered for:", dishId, viewer);
+  //   if (viewer) viewer.activateAR();
+  // };
 
   const handleViewAR = (dishId) => {
     const viewer = modelViewerRefs.current[dishId];
-    if (viewer) viewer.activateAR();
+    if (!viewer) return console.warn("Viewer not found for", dishId);
+
+    // Check if AR is available on this device
+    if (!viewer.canActivateAR) {
+      alert("AR not supported on this device/browser.");
+      return;
+    }
+
+    try {
+      viewer.activateAR();
+    } catch (err) {
+      console.error("Error triggering AR:", err);
+      alert("Failed to start AR. Check browser and model compatibility.");
+    }
   };
 
   useEffect(() => {
@@ -380,8 +365,6 @@ export default function RestaurantMenu() {
       .includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
-
-  console.log("filteredDishes", filteredDishes)
 
   if (loading) return <LoadingSpinner />;
   return (
@@ -438,8 +421,9 @@ export default function RestaurantMenu() {
           {/* Body */}
           <main className="px-8 py-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {filteredDishes.map((section, i) => 
-                (
+              {filteredDishes.map((section, i) =>
+              (
+
                 <motion.section
                   key={section._id}
                   initial={{ opacity: 0, y: 20 }}
@@ -452,26 +436,37 @@ export default function RestaurantMenu() {
                     {section.category}
                   </h2>
                   <div className="space-y-4">
-                      <motion.article
-                        key={section.name}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.1, duration: 0.4 }}
-                        className="flex justify-between items-start bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4"
-                      >
-                        <div className="pr-4">
-                          <h3 className="text-base font-medium text-gray-900 flex items-center">{section.name}
-                            {section.tags && section.tags.map((t) => <Tag key={t}>{t}</Tag>)}
-                          </h3>
-                          <p className="mt-1 text-sm text-gray-500">{section.description}</p>
-                          <div className="text-base font-semibold text-gray-800">₹{section.price}</div>
+                    <motion.article
+                      key={section.name}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: i * 0.1, duration: 0.4 }}
+                      className="flex justify-between items-start bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4"
+                    >
+                      <div className="pr-4">
+                        <h3 className="text-base font-medium text-gray-900 flex items-center">{section.name}
+                          {section.tags && section.tags.map((t) => <Tag key={t}>{t}</Tag>)}
+                        </h3>
+                        <p className="mt-1 text-sm text-gray-500">{section.description}</p>
+                        <div className="text-base font-semibold text-gray-800">₹{section.price}</div>
+                      </div>
+                      <model-viewer
+                        ref={(el) => (modelViewerRefs.current[section._id] = el)}
+                        src={`https://api.thezabbie.com/uploads/models/${restaurantId}/${section.name}.glb`}
+                        ios-src={`https://api.thezabbie.com/uploads/models/${restaurantId}/${section.name}.usdz`}
+                        alt={section.name}
+                        ar
+                        ar-modes="scene-viewer quick-look webxr"
+                        auto-rotate
+                        camera-controls
+                        style={{ display: "none" }}
+                      ></model-viewer>
+                      {section.enableModel && (
+                        <div className="text-right">
+                          <button className="mt-3 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-300 hover:bg-green-400 shadow-sm transition-transform transform hover:scale-105" onClick={() => handleViewAR(section._id)}>AR View</button>
                         </div>
-                        {section.enableModel && (
-                          <div className="text-right">
-                            <button className="mt-3 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-300 hover:bg-green-400 shadow-sm transition-transform transform hover:scale-105"onClick={handleViewAR(section._id)}>AR View</button>
-                          </div>
-                        )}
-                      </motion.article>
+                      )}
+                    </motion.article>
                   </div>
                 </motion.section>
               ))}

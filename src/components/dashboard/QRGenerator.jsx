@@ -18,7 +18,7 @@ const QRGenerator = () => {
         setRestaurant(response.data);
         
         // Generate menu URL based on restaurant slug
-        const url = `${window.location.origin}/menu/${response.data.slug}`;
+        const url = `${window.location.origin}:5173/menu/${response.data.slug}`;
         setMenuUrl(url);
       } catch (err) {
         console.error('Error fetching restaurant:', err);
