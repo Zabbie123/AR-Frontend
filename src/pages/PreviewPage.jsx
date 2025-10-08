@@ -27,7 +27,7 @@ const PreviewPage = () => {
   };
 
   const handleDeleteDish = async (dishId) => {
-    if (!user?.token) {
+    if (!localStorage.getItem('token')) {
       alert("Session expired. Please log in again!");
       navigate("/login");
       return;
@@ -38,7 +38,7 @@ const PreviewPage = () => {
         `http://${window.location.hostname}:5000/api/dishes/${dishId}`,
         {
           headers: {
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         }
       );

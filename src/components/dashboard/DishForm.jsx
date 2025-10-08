@@ -115,6 +115,7 @@ const DishForm = () => {
         image: imageUrl,
         model3dglb: glbmodelUrl,
         model3dusdz: usdzmodelUrl,
+        enableModels: enableModels
       };
 
       if (isEditing) {
