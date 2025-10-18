@@ -528,11 +528,6 @@ export default function PublicMenu() {
   const [viewMode, setViewMode] = useState("grid");
   const modelViewerRefs = useRef({});
 
-  const handleViewAR = (dishId) => {
-    const viewer = modelViewerRefs.current[dishId];
-    if (viewer) viewer.activateAR();
-  };
-
   useEffect(() => {
     const fetchRestaurantData = async () => {
       try {
@@ -571,7 +566,7 @@ export default function PublicMenu() {
       .includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
-  console.log("filteredDishes", filteredDishes);
+
   if (loading) return <LoadingSpinner />;
   return (
     <>
@@ -585,32 +580,16 @@ export default function PublicMenu() {
             {restaurant.logo && (
               <img src={restaurant.logo} alt={restaurant.name} className="h-20 mx-auto object-contain" />
             )}
-            <h1 className="font-serif text-5xl sm:text-6xl md:text-8xl font-bold text-brand-text tracking-wider">
+            <h1 className="mt-6 font-serif text-5xl sm:text-6xl md:text-8xl font-bold text-brand-text tracking-wider">
               {restaurant.name}
             </h1>
             <p className="mt-6 text-lg sm:text-xl text-brand-accent tracking-widest uppercase font-sans">
               {restaurant.description}
             </p>
-            <div className="mt-8 md:mt-12 w-24 h-px bg-brand-accent mx-auto"></div>
+            <div className="md:mt-12 w-24 h-px bg-brand-accent mx-auto"></div>
           </div>
         </header>
         <Navigation categories={categories.map((cat) => ({ title: cat, id: cat }))} />
-        {/* <main className="max-w-7xl mx-auto px-8 sm:px-10 lg:px-12 pt-10 md:pt-12 pb-16 md:pb-20">
-          <div className="space-y-20 md:space-y-24">
-            {categories.map((category, index) => {
-              filteredDishes.map((items, index) => {
-                if (items.category == category) {
-                  return (<MenuSection
-                    key={index}
-                    id={category}
-                    title={category}
-                    items={items}
-                  />)
-                }
-              })
-            })}
-          </div>
-        </main> */}
 
         <main className="max-w-7xl mx-auto px-8 sm:px-10 lg:px-12 pt-10 md:pt-12 pb-16 md:pb-20">
           <div className="space-y-20 md:space-y-24">

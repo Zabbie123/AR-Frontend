@@ -7,6 +7,7 @@ const MenuItemCard = ({ item }) => {
   const { restaurantSlug } = useParams();
   const [restaurant, setRestaurant] = useState({});
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
   const [dishes, setDishes] = useState([]);
   const [restaurantId, setRestaurantId] = useState(null);
   const modelViewerRefs = useRef({});
@@ -50,7 +51,7 @@ const MenuItemCard = ({ item }) => {
     <div className="py-8 border-b border-brand-accent/20 last:border-b-0">
       <div className="flex justify-between items-start mb-2">
         <h3 className="font-serif text-xl md:text-2xl font-semibold text-brand-text pr-4">{item.name}</h3>
-        <p className="font-sans text-lg md:text-xl font-bold text-brand-accent whitespace-nowrap">{item.price}</p>
+        <p className="font-sans text-lg md:text-xl font-bold text-brand-accent whitespace-nowrap">₹{item.price}</p>
       </div>
       <p className="font-sans text-brand-text opacity-80 text-sm sm:text-base flex-grow mb-4">
         {item.description}
