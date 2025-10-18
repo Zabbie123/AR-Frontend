@@ -515,7 +515,6 @@ import { restaurantService } from "../../services/restaurantService";
 import Navigation from './Navigation';
 import MenuSection from './MenuSection';
 import Footer from './Footer';
-import { MENU_DATA } from './constants';
 
 export default function PublicMenu() {
   const { restaurantSlug } = useParams();
