@@ -50,7 +50,9 @@ const DishForm = () => {
             isVisible: dish.isVisible,
           });
 
-          if (dish.model3dglb || dish.model3dusdz) {
+          if (dish.enableModels !== undefined) {
+            setEnableModels(dish.enableModels);
+          } else if (dish.model3dglb || dish.model3dusdz) {
             setEnableModels(true);
           }
         } catch (err) {
@@ -242,14 +244,12 @@ const DishForm = () => {
           <label className="font-semibold">Enable 3D Model Upload</label>
           <div
             onClick={() => setEnableModels(!enableModels)}
-            className={`relative w-14 h-7 rounded-full cursor-pointer transition-all ${
-              enableModels ? 'bg-green-500' : 'bg-gray-300'
-            }`}
+            className={`relative w-14 h-7 rounded-full cursor-pointer transition-all ${enableModels ? 'bg-green-500' : 'bg-gray-300'
+              }`}
           >
             <div
-              className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-300 ${
-                enableModels ? 'translate-x-7' : 'translate-x-0'
-              }`}
+              className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-300 ${enableModels ? 'translate-x-7' : 'translate-x-0'
+                }`}
             ></div>
           </div>
         </div>

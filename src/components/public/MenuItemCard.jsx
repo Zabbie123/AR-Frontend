@@ -65,27 +65,31 @@ const MenuItemCard = ({ item }) => {
           )}
         </div>
         <div>
-          <model-viewer
-            ref={(el) => (modelViewerRefs.current[item._id] = el)}
-            src={`https://api.thezabbie.com/uploads/models/${restaurantId}/${item.name}.glb`}
-            ios-src={`https://api.thezabbie.com/uploads/models/${restaurantId}/${item.name}.usdz`}
-            alt={item.name}
-            ar
-            ar-modes="scene-viewer quick-look webxr"
-            auto-rotate
-            camera-controls
-            style={{ display: "none" }}
-          ></model-viewer>
-          <button
-            onClick={() => handleARClick(item._id)}
-            className="flex items-center space-x-2 bg-transparent border border-brand-accent text-brand-accent hover:bg-brand-accent hover:text-brand-bg-contrast font-semibold py-1 px-3 rounded-full text-xs transition-colors duration-300"
-            aria-label={`View ${item.name} in Augmented Reality`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-            </svg>
-            <span>View in AR</span>
-          </button>
+          {item.enableModels && (
+            <>
+              <model-viewer
+                ref={(el) => (modelViewerRefs.current[item._id] = el)}
+                src={`https://api.thezabbie.com/uploads/models/${restaurantId}/${item.name}.glb`}
+                ios-src={`https://api.thezabbie.com/uploads/models/${restaurantId}/${item.name}.usdz`}
+                alt={item.name}
+                ar
+                ar-modes="scene-viewer quick-look webxr"
+                auto-rotate
+                camera-controls
+                style={{ display: "none" }}
+              ></model-viewer>
+              <button
+                onClick={() => handleARClick(item._id)}
+                className="flex items-center space-x-2 bg-transparent border border-brand-accent text-brand-accent hover:bg-brand-accent hover:text-brand-bg-contrast font-semibold py-1 px-3 rounded-full text-xs transition-colors duration-300"
+                aria-label={`View ${item.name} in Augmented Reality`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                <span>View in AR</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
